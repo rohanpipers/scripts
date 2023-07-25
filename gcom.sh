@@ -1,31 +1,33 @@
 #!/bin/bash
 
 # Define an associative array to store the commit types and their shortform input keys
-declare -A commit_types=(
-  ["f"]="feat"
-  ["x"]="fix"
-  ["d"]="docs"
-  ["s"]="style"
-  ["r"]="refactor"
-  ["t"]="test"
-  ["c"]="chore"
-)
+commit_types=("feat" "fix" "docs" "style" "refactor" "test" "chore")
+commit_keys=("f" "x" "d" "s" "r" "t" "c")
 
 # Function to display the commit types and their shortform input keys
 function display_commit_types() {
   echo "Commit Types:"
-  for key in "${!commit_types[@]}"; do
-    echo "  ${commit_types[$key]}: $key"
+  for ((i = 0; i < ${#commit_types[@]}; i++)); do
+    echo "  ${commit_keys[i]}: ${commit_types[i]}"
   done
 }
 
 # Prompt the user to choose a commit type using shortform input key
 function get_commit_type() {
   read -p "Choose the commit type (enter shortform key): " input_key
-  commit_type=${commit_types[$input_key]}
-  if [ -z "$commit_type" ]; then
+  local index=-1
+  for ((i = 0; i < ${#commit_keys[@]}; i++)); do
+    if [ "$input_key" == "${commit_keys[i]}" ]; then
+      index=$i
+      break
+    fi
+  done
+
+  if [ $index -eq -1 ]; then
     echo "Invalid input key. Please try again."
     get_commit_type
+  else
+    commit_type="${commit_types[index]}"
   fi
 }
 
